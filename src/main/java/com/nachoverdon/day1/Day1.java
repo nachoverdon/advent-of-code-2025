@@ -17,12 +17,12 @@ public class Day1 {
 
   static void main() {
     Day1 test = new Day1();
-    test.execute(RESOURCES + "day1_test.txt");
+    test.execute(RESOURCES + "test.txt");
     System.out.println("Test password is: " + test.password);
 
     Day1 exercise = new Day1();
 
-    exercise.execute(RESOURCES + "day1_input.txt");
+    exercise.execute(RESOURCES + "input.txt");
     System.out.println("Password is: " + exercise.password);
   }
 

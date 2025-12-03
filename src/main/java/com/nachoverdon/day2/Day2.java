@@ -24,11 +24,11 @@ public class Day2 {
     Day2 test = new Day2();
     Day2 exercise = new Day2();
 
-    test.execute(RESOURCES + "day2_test.txt");
+    test.execute(RESOURCES + "test.txt");
     System.out.println(String.join(", ", test.invalidIds));
     System.out.println("Test result is: " + test.result);
 
-    exercise.execute(RESOURCES + "day2_input.txt");
+    exercise.execute(RESOURCES + "input.txt");
     System.out.println(String.join(", ", exercise.invalidIds));
     System.out.println("Result is: " + exercise.result);
   }
