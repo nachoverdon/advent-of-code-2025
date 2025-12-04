@@ -95,8 +95,7 @@ public class Day2 {
 
   private long sumInvalidIds(List<String> invalidIds) {
     return invalidIds.parallelStream()
-        .map(Long::parseLong)
-        .reduce(Long::sum)
-        .orElse(0L);
+        .mapToLong(Long::parseLong)
+        .sum();
   }
 }

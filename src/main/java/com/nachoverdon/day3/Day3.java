@@ -41,8 +41,8 @@ public class Day3 {
 
     try (BufferedReader reader = Files.newBufferedReader(path)) {
       result = reader.lines()
-          .map(this::processBank)
-          .reduce(Long::sum).orElse(0L);
+          .mapToLong(this::processBank)
+          .sum();
     } catch (Exception e) {
       System.err.println(e.getMessage());
       e.printStackTrace();
