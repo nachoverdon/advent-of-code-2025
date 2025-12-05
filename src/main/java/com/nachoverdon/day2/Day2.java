@@ -1,5 +1,8 @@
 package com.nachoverdon.day2;
 
+import static com.nachoverdon.common.Range.getRangeFromString;
+
+import com.nachoverdon.common.Range;
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +14,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-record Range(long start, long end) {}
-
 public class Day2 {
   private static final int PART = 2;
   private static final Pattern pattern = Pattern.compile("^(\\d+)(?:\\1" + (PART == 2 ? "+" : "") + ")$");;
-  private static final String RESOURCES = "src/main/resources/day2/";
+  private static final String RESOURCES = "src/main/resources/" + Day2.class.getSimpleName().toLowerCase() + "/";;
   private final List<String> invalidIds = new ArrayList<>();
   private long result = 0;
 
@@ -51,12 +52,6 @@ public class Day2 {
 
   private void processRange(String rangeString) {
     invalidIds.addAll(getInvalidIds(getRangeFromString(rangeString)));
-  }
-
-  private Range getRangeFromString(String range) {
-    String[] numbers = range.split("-");
-
-    return new Range(Long.parseLong(numbers[0]), Long.parseLong(numbers[1]));
   }
 
   private List<String> getInvalidIds(Range range) {

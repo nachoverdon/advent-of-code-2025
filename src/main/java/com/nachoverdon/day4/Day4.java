@@ -94,7 +94,7 @@ class Grid {
 
 public class Day4 {
   private static final int LIMIT_ADJACENT = 3;
-  private static final String RESOURCES = "src/main/resources/day4/";
+  private static final String RESOURCES = "src/main/resources/" + Day4.class.getSimpleName().toLowerCase() + "/";
   private long result = 0;
   private final int part;
 

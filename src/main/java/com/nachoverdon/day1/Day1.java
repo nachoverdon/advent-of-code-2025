@@ -9,7 +9,7 @@ record Rotation(int dir, int dist) {}
 
 public class Day1 {
   private static final int PART = 2;
-  private static final String RESOURCES = "src/main/resources/day1/";
+  private static final String RESOURCES = "src/main/resources/" + Day1.class.getSimpleName().toLowerCase() + "/";;
   private static final int L = -1;
   private static final int R = 1;
   private int pos = 50;

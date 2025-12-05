@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class Day3 {
   private static final char CLEAR = '0';
-  private static final String RESOURCES = "src/main/resources/day3/";
+  private static final String RESOURCES = "src/main/resources/" + Day3.class.getSimpleName().toLowerCase() + "/";;
   private long result = 0;
   private final int batteriesPerBank;
 
