@@ -1,96 +1,15 @@
 package com.nachoverdon.day4;
 
+import com.nachoverdon.common.Cell;
+import com.nachoverdon.common.Grid;
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-record Cell(int x, int y, int type) {
-  public static int EMPTY = 0;
-  public static int PAPER = 1;
-  public static Cell EMPTY_CELL = new Cell(0, 0, EMPTY);
-
-  public Cell(int x, int y, char c) {
-    this(x, y, c == '@' ? Cell.PAPER : Cell.EMPTY);
-  }
-
-  public boolean isPaper() {
-    return type == PAPER;
-  }
-}
-
-class Grid {
-  public Cell[][] data;
-  public int height;
-  public int width;
-
-  public Grid(Cell[][] data) {
-    this.data = data;
-    this.height = data.length;
-    this.width = data.length == 0 ? 0 : data[0].length;
-  }
-
-  private Cell getCell(Cell cell, int dx, int dy) {
-    int x = cell.x(),
-        y = cell.y();
-    if (x + dx < 0 || x + dx >= width || y + dy < 0 || y + dy >= height) return Cell.EMPTY_CELL;
-
-    return data[y + dy][x + dx];
-  }
-
-  private Cell n(Cell cell) {
-    return getCell(cell, 0, -1);
-  }
-
-  private Cell s(Cell cell) {
-    return getCell(cell, 0, 1);
-  }
-
-  private Cell e(Cell cell) {
-    return getCell(cell, 1, 0);
-  }
-
-  private Cell w(Cell cell) {
-    return getCell(cell, -1, 0);
-  }
-
-  private Cell ne(Cell cell) {
-    return getCell(cell, 1, -1);
-  }
-
-  private Cell nw(Cell cell) {
-    return getCell(cell, -1, -1);
-  }
-
-  private Cell se(Cell cell) {
-    return getCell(cell, 1, 1);
-  }
-
-  private Cell sw(Cell cell) {
-    return getCell(cell, -1, 1);
-  }
-
-  public void remove(Cell cell) {
-    data[cell.y()][cell.x()] = Cell.EMPTY_CELL;
-  }
-
-  public Stream<Cell> getCellsAround(Cell cell) {
-    return Stream.of(n(cell), s(cell), e(cell), w(cell), ne(cell), nw(cell), se(cell), sw(cell));
-  }
-
-  public Stream<Cell> getPaperCells(Cell cell) {
-    return getCellsAround(cell).filter(Cell::isPaper);
-  }
-
-  public Stream<Cell> getPapersCellStream() {
-    return Arrays.stream(data).flatMap(Arrays::stream).filter(Cell::isPaper);
-  }
-}
 
 public class Day4 {
   private static final int LIMIT_ADJACENT = 3;
@@ -111,7 +30,7 @@ public class Day4 {
     Day4 testPart2 = new Day4(2);
 
     testPart2.execute(RESOURCES + "test.txt");
-    System.out.println("Test result is " + (testPart2.result == 13 ? "" : "in") + "correct: " + testPart2.result);
+    System.out.println("Test result is " + (testPart2.result == 43 ? "" : "in") + "correct: " + testPart2.result);
 
     Day4 exercisePart2 = new Day4(2);
     exercisePart2.execute(RESOURCES + "input.txt");
@@ -153,7 +72,7 @@ public class Day4 {
 
   private Cell[] getCellsFromRow(String row, int y) {
     return IntStream.range(0, row.length())
-        .mapToObj(x -> new Cell(x, y, row.charAt(x)))
+        .mapToObj(x -> new Cell(x, y, row.charAt(x) == '@'))
         .toArray(Cell[]::new);
   }
 
