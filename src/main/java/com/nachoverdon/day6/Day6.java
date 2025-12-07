@@ -9,6 +9,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
+class Operation {
+  public long total;
+  public String operator;
+
+  public Operation(long total, String operator) {
+    this.total = total;
+    this.operator = operator;
+  }
+}
 
 public class Day6 {
   private static final boolean NUMBERS = false;
@@ -53,8 +64,12 @@ public class Day6 {
     return row.contains(ADD) || row.contains(MULT);
   }
 
+  private Stream<String> rowToNumberStringStream(String row) {
+    return Arrays.stream(trimAndSplit(row));
+  }
+
   private List<Long> rowToNumberList(String row) {
-    return Arrays.stream(trimAndSplit(row))
+    return rowToNumberStringStream(row)
         .map(Long::parseLong)
         .toList();
   }
@@ -66,9 +81,7 @@ public class Day6 {
   }
 
   private List<String> rowToOperator(String row) {
-    return Arrays.stream(trimAndSplit(row))
-        // .map(op -> op.equals(ADD) ? Long::sum : this::sum)
-        .toList();
+    return Arrays.stream(trimAndSplit(row)).toList();
   }
 
   private List<List<String>> rowsToOperator(List<String> rows) {
@@ -87,10 +100,7 @@ public class Day6 {
     var map = lines.stream().collect(Collectors.groupingBy(this::isOperator));
     var operators = rowsToOperator(map.get(OPERATORS)).getFirst();
     var numbersList = getNumbersLists(map.get(NUMBERS));
-
     long total = 0;
-
-    int size = operators.size();
 
     for (int i = 0; i < operators.size(); i++) {
       List<Long> columnNumbers = new ArrayList<>(numbersList.size());
@@ -109,28 +119,62 @@ public class Day6 {
 
   private long solve2(List<String> lines) {
     var map = lines.stream().collect(Collectors.groupingBy(this::isOperator));
-    var operators = rowsToOperator(map.get(OPERATORS)).getFirst();
-    // TODO: Don't parse long yet
-    var numbersList = getNumbersLists(map.get(NUMBERS));
+    var operatorsRow = map.get(OPERATORS).getFirst();
+    var numbersList = map.get(NUMBERS);
+    List<String> numbersInColumn = new ArrayList<>(numbersList.size());
 
-    long total = 0;
+    return getTotal(operatorsRow, numbersList, numbersInColumn);
+  }
 
-    int size = operators.size();
-    int start = size - 1;
-    int end   = -1;
+  private long getTotal(String operatorsRow, List<String> numbersList, List<String> numbersInColumn) {
+    Operation op = new Operation(0, "");
 
-    for (int i = start; i != end; i--) {
-      List<Long> columnNumbers = new ArrayList<>(numbersList.size());
-
-      for (List<Long> numbers : numbersList) {
-        columnNumbers.add(numbers.get(i));
-      }
-
-      total += operators.get(i).equals(ADD)
-          ? getLongStream(columnNumbers).sum()
-          : getLongStream(columnNumbers).reduce(Day6::mult).orElse(0L);
+    for (int i = operatorsRow.length() - 1; i != -1; i--) {
+      processColumn(operatorsRow, numbersList, numbersInColumn, i, op);
     }
 
-    return total;
+    return op.total;
+  }
+
+  private void processColumn(String operatorsRow, List<String> numbersList, List<String> numbersInColumn, int i, Operation op) {
+    String operatorRowStr = operatorsRow.substring(i, i + 1);
+    StringBuilder subcolumnNumber = new StringBuilder();
+
+    op.operator = operatorRowStr.isBlank() ? op.operator : operatorRowStr;
+    appendDigitToSubcolumnNumber(numbersList, i, subcolumnNumber);
+    addNumberOrCalculateTotal(numbersInColumn, i, op, subcolumnNumber);
+  }
+
+  private void addNumberOrCalculateTotal(List<String> numbersInColumn, int i, Operation op, StringBuilder subcolumnNumber) {
+    if (i == 0) numbersInColumn.add(subcolumnNumber.toString());
+
+    if (subcolumnNumber.isEmpty() || i == 0) {
+      calculateTotalAndClearColumn(numbersInColumn, op);
+    } else {
+      numbersInColumn.add(subcolumnNumber.toString());
+    }
+  }
+
+  private void calculateTotalAndClearColumn(List<String> numbersInColumn, Operation op) {
+    op.total += sumOrMultiplyColumn(op.operator, numbersInColumn);
+    numbersInColumn.clear();
+  }
+
+  private long sumOrMultiplyColumn(String currentOperator, List<String> numbersInColumn) {
+    LongStream stream = numbersInColumn.stream().mapToLong(Long::parseLong);
+
+    return currentOperator.equals(ADD)
+        ? stream.sum()
+        : stream.sequential().reduce(Day6::mult).orElse(0);
+  }
+
+  private void appendDigitToSubcolumnNumber(List<String> numbersList, int i, StringBuilder subcolumnNumber) {
+    for (String row : numbersList) {
+      String digit = row.substring(i, i +1);
+
+      if (!" ".equals(digit)) {
+        subcolumnNumber.append(digit);
+      }
+    }
   }
 }
