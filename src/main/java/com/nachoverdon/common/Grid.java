@@ -62,11 +62,11 @@ public class Grid {
     return Stream.of(n(cell), s(cell), e(cell), w(cell), ne(cell), nw(cell), se(cell), sw(cell));
   }
 
-  public Stream<Cell> getPaperCells(Cell cell) {
+  public Stream<Cell> getValuedCellsAround(Cell cell) {
     return getCellsAround(cell).filter(Cell::hasValue);
   }
 
-  public Stream<Cell> getPapersCellStream() {
+  public Stream<Cell> getValuedCellStream() {
     return Arrays.stream(data).flatMap(Arrays::stream).filter(Cell::hasValue);
   }
 }

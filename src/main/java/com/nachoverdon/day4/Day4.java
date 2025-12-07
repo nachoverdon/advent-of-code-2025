@@ -2,16 +2,16 @@ package com.nachoverdon.day4;
 
 import com.nachoverdon.common.Cell;
 import com.nachoverdon.common.Grid;
+import com.nachoverdon.common.Utils;
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Day4 {
+  private static final char PAPER = '@';
   private static final int LIMIT_ADJACENT = 3;
   private static final String RESOURCES = "src/main/resources/" + Day4.class.getSimpleName().toLowerCase() + "/";
   private long result = 0;
@@ -45,7 +45,7 @@ public class Day4 {
     Path path = Paths.get(fileName);
 
     try (BufferedReader reader = Files.newBufferedReader(path)) {
-      Grid grid = getGridFromStringStream(reader.lines());
+      Grid grid = Utils.getGridFromStringStream(reader.lines(), PAPER);
 
       if (part == 1) {
         result = getAccessiblePapersCount(grid);
@@ -58,31 +58,13 @@ public class Day4 {
     }
   }
 
-  private Grid getGridFromStringStream(Stream<String> stream) {
-     return new Grid(getCellDataFromStringStream(stream));
-  }
-
-  private Cell[][] getCellDataFromStringStream(Stream<String> stream) {
-    AtomicInteger y = new AtomicInteger();
-
-     return stream
-         .map(row -> getCellsFromRow(row, y.getAndIncrement()))
-         .toArray(Cell[][]::new);
-  }
-
-  private Cell[] getCellsFromRow(String row, int y) {
-    return IntStream.range(0, row.length())
-        .mapToObj(x -> new Cell(x, y, row.charAt(x) == '@'))
-        .toArray(Cell[]::new);
-  }
-
   private Stream<Cell> getAccessiblePapers(Grid grid) {
-    return grid.getPapersCellStream()
+    return grid.getValuedCellStream()
         .filter(cell -> getPapersAroundCount(grid, cell) <= LIMIT_ADJACENT);
   }
 
   private long getPapersAroundCount(Grid grid, Cell cell) {
-    return grid.getPaperCells(cell).count();
+    return grid.getValuedCellsAround(cell).count();
   }
 
   private long getAccessiblePapersCount(Grid grid) {
